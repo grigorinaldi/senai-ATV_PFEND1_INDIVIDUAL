@@ -48,3 +48,32 @@ h2 {
 .produto p {
   margin-bottom: 8px;
 }
+
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+form input {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+form button {
+  padding: 12px 20px;
+  background-color: #7041a6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: #583087;
+}
