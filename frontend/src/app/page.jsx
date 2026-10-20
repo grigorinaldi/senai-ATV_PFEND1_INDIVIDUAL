@@ -154,8 +154,10 @@ export default function Home() {
 
   return (
     <main>
-      <h1>Papelândia</h1>
-      <p>Gerenciamento de produtos da papelaria</p>
+      <div className="cabecalho">
+        <h1>Papelândia</h1>
+        <p>Gerenciamento de produtos da papelaria</p>
+      </div>
 
 
       <h2>{idEditando !== null ? "Editar produto" : "Cadastrar produto"}</h2>
