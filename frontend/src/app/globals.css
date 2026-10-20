@@ -92,3 +92,19 @@ form button:hover {
 .btn-excluir:hover {
   background-color: #b52a37;
 }
+
+
+.btn-editar {
+  background-color: #7041a6;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+.btn-editar:hover {
+  background-color: #583087;
+}

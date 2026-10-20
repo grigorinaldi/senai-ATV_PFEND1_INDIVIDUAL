@@ -11,6 +11,7 @@ export default function Home() {
   const [preco, setPreco] = useState("");
   const [quantidade, setQuantidade] = useState("");
   const [mensagem, setMensagem] = useState("");
+  const [idEditando, setIdEditando] = useState(null);
 
   useEffect(() => {
     fetch("/api/produtos")
@@ -90,14 +91,77 @@ export default function Home() {
   }
 
 
+  function editarProduto(produto) {
+    setIdEditando(produto.id);
+    setNome(produto.nome);
+    setCategoria(produto.categoria);
+    setPreco(produto.preco);
+    setQuantidade(produto.quantidade);
+    setMensagem("");
+  }
+
+
+  async function salvarEdicao(e) {
+    e.preventDefault();
+
+    if (!nome.trim() || !categoria.trim() ||
+      preco === "" || quantidade === "" ||
+      Number(preco) < 0 || Number(quantidade) < 0 ||
+      !Number.isInteger(Number(quantidade))) {
+      setMensagem("Preencha os campos corretamente.");
+      return;
+    }
+
+    const produtoAtualizado = {
+      nome: nome.trim(),
+      categoria: categoria.trim(),
+      preco: Number(preco),
+      quantidade: Number(quantidade)
+    };
+
+    try {
+      const resposta = await fetch(`/api/produtos/${idEditando}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(produtoAtualizado)
+      });
+
+      if (!resposta.ok) {
+        throw new Error("Erro ao editar");
+      }
+
+      const produtoEditado = await resposta.json();
+
+      setProdutos(produtos.map(produto =>
+        produto.id === idEditando ? produtoEditado : produto
+      ));
+
+      setNome("");
+      setCategoria("");
+      setPreco("");
+      setQuantidade("");
+      setIdEditando(null);
+      setMensagem("Produto atualizado com sucesso!");
+
+    } catch (erro) {
+      setMensagem("Erro ao editar produto.");
+    }
+  }
+
+
+
   return (
     <main>
       <h1>Papelândia</h1>
       <p>Gerenciamento de produtos da papelaria</p>
 
-      <h2>Cadastrar produto</h2>
 
-      <form onSubmit={cadastrarProduto}>
+      <h2>{idEditando !== null ? "Editar produto" : "Cadastrar produto"}</h2>
+
+      <form onSubmit={idEditando !== null ? salvarEdicao : cadastrarProduto}>
+
         <input
           type="text"
           placeholder="Nome do produto"
@@ -134,7 +198,27 @@ export default function Home() {
           required
         />
 
-        <button type="submit">Cadastrar</button>
+
+        <button type="submit">
+          {idEditando !== null ? "Salvar alterações" : "Cadastrar"}
+        </button>
+
+        {idEditando !== null && (
+          <button
+            type="button"
+            onClick={() => {
+              setIdEditando(null);
+              setNome("");
+              setCategoria("");
+              setPreco("");
+              setQuantidade("");
+              setMensagem("");
+            }}
+          >
+            Cancelar
+          </button>
+        )}
+
       </form>
 
       <p>{mensagem}</p>
@@ -156,6 +240,15 @@ export default function Home() {
             >
               Excluir
             </button>
+
+
+            <button
+              className="btn-editar"
+              onClick={() => editarProduto(produto)}
+            >
+              Editar
+            </button>
+
           </div>
         ))}
       </div>
