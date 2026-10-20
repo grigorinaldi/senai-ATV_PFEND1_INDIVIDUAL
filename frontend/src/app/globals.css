@@ -77,3 +77,18 @@ form button {
 form button:hover {
   background-color: #583087;
 }
+
+
+.btn-excluir {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.btn-excluir:hover {
+  background-color: #b52a37;
+}

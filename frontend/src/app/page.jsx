@@ -4,52 +4,6 @@
 import { useEffect, useState } from "react";
 import "./globals.css";
 
-
-async function cadastrarProduto(e) {
-  e.preventDefault();
-
-  if (!nome.trim() || !categoria.trim() ||
-    preco === "" || quantidade === "" ||
-    Number(preco) < 0 || Number(quantidade) < 0 ||
-    !Number.isInteger(Number(quantidade))) {
-    setMensagem("Preencha os campos corretamente.");
-    return;
-  }
-
-  const novoProduto = {
-    nome: nome.trim(),
-    categoria: categoria.trim(),
-    preco: Number(preco),
-    quantidade: Number(quantidade)
-  };
-
-  try {
-    const resposta = await fetch("/api/produtos", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(novoProduto)
-    });
-
-    if (!resposta.ok) {
-      throw new Error("Erro ao cadastrar");
-    }
-
-    const produtoCadastrado = await resposta.json();
-
-    setProdutos([...produtos, produtoCadastrado]);
-
-    setNome("");
-    setCategoria("");
-    setPreco("");
-    setQuantidade("");
-    setMensagem("Produto cadastrado com sucesso!");
-  } catch (erro) {
-    setMensagem("Erro ao cadastrar produto.");
-  }
-}
-
 export default function Home() {
   const [produtos, setProdutos] = useState([]);
   const [nome, setNome] = useState("");
@@ -64,8 +18,82 @@ export default function Home() {
       .then(dados => setProdutos(dados));
   }, []);
 
+  async function cadastrarProduto(e) {
+    e.preventDefault();
+
+    if (!nome.trim() || !categoria.trim() ||
+      preco === "" || quantidade === "" ||
+      Number(preco) < 0 || Number(quantidade) < 0 ||
+      !Number.isInteger(Number(quantidade))) {
+      setMensagem("Preencha os campos corretamente.");
+      return;
+    }
+
+    const novoProduto = {
+      nome: nome.trim(),
+      categoria: categoria.trim(),
+      preco: Number(preco),
+      quantidade: Number(quantidade)
+    };
+
+    try {
+      const resposta = await fetch("/api/produtos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(novoProduto)
+      });
+
+      if (!resposta.ok) {
+        throw new Error("Erro ao cadastrar");
+      }
+
+      const produtoCadastrado = await resposta.json();
+
+      setProdutos([...produtos, produtoCadastrado]);
+
+      setNome("");
+      setCategoria("");
+      setPreco("");
+      setQuantidade("");
+      setMensagem("Produto cadastrado com sucesso!");
+
+    } catch (erro) {
+      setMensagem("Erro ao cadastrar produto.");
+    }
+  }
+
+
+  async function excluirProduto(id) {
+    const confirmar = window.confirm("Deseja excluir este produto?");
+
+    if (!confirmar) {
+      return;
+    }
+
+    try {
+      const resposta = await fetch(`/api/produtos/${id}`, {
+        method: "DELETE"
+      });
+
+      if (!resposta.ok) {
+        throw new Error("Erro ao excluir");
+      }
+
+      setProdutos(produtos.filter(produto => produto.id !== id));
+      setMensagem("Produto excluído com sucesso!");
+
+    } catch (erro) {
+      setMensagem("Erro ao excluir produto.");
+    }
+  }
+
+
   return (
     <main>
+      <h1>Papelândia</h1>
+      <p>Gerenciamento de produtos da papelaria</p>
 
       <h2>Cadastrar produto</h2>
 
@@ -111,21 +139,27 @@ export default function Home() {
 
       <p>{mensagem}</p>
 
-      <h1>Papelândia</h1>
-      <p>Gerenciamento de produtos da papelaria</p>
-
       <h2>Produtos cadastrados</h2>
+
 
       <div className="lista">
         {produtos.map(produto => (
           <div className="produto" key={produto.id}>
             <h3>{produto.nome}</h3>
             <p>Categoria: {produto.categoria}</p>
-            <p>Preço: R$ {produto.preco.toFixed(2)}</p>
+            <p>Preço: R$ {Number(produto.preco).toFixed(2)}</p>
             <p>Estoque: {produto.quantidade}</p>
+
+            <button
+              className="btn-excluir"
+              onClick={() => excluirProduto(produto.id)}
+            >
+              Excluir
+            </button>
           </div>
         ))}
       </div>
+
     </main>
   );
 }
