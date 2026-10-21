@@ -155,8 +155,12 @@ export default function Home() {
   return (
     <main>
       <div className="cabecalho">
-        <h1>Papelândia</h1>
-        <p>Gerenciamento de produtos da papelaria</p>
+        <img src="\Logo Papelândia.png" alt="Logo da Papelândia"className="logo"/>
+
+        <div className="cabecalho-texto">
+          <h1>Papelândia</h1>
+          <p>Gerenciamento de produtos da papelaria</p>
+        </div>
       </div>
 
 
